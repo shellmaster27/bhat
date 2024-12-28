@@ -31,7 +31,7 @@
         }
 
         .hero h1 {
-            font-size: 3rem;
+            font-size: 4rem;
             margin: 0;
         }
 
@@ -95,6 +95,7 @@
         .services .icon-grid .service img {
             max-width: 50px;
             margin-bottom: 10px;
+            
         }
 
         .benefits {
@@ -198,20 +199,57 @@
             line-height: 1.0;
             margin-top: 15px;
         } 
+
+
+        .ticker {
+            background-color: white; /* Ticker background color */
+            color: black; /* Ticker text color */
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+        .ticker span {
+            margin-right: 15px;
+    }
+
+        .ticker span:last-child {
+            margin-right: 0;
+    }
+
+
     </style>
 </head>
 <body>
     <div class="hero">
-        <h1>Bathon Exchange</h1>
+        <h1>🥖Bathon Exchange</h1>
         <p>Обменивайте доллары, рубли, евро и криптовалюту на тайский бат по курсу в режиме реального времени.</p>
         <a href="https://t.me/Bathon_Exchange" class="button">Совершить обмен</a>
     </div>
+    #
+    <div class="ticker-wrapper">
+        <div class="ticker" id="ticker">
+            <div class="ticker-content">
+                Loading exchange rates...
+            </div>
+        </div>
+    </div>
+    
+    
 
     <div class="about">
         <div class="text">
             <h2>Немного о Bathon Exchange...</h2>
             <p>Наша команда занимается этим благородным ремеслом уже 7 лет. Благодаря большой клиентской базе и высокому объему транзакций мы являемся ведущим обменным пунктом для конверсии долларов, рублей, евро и криптовалюты в тайский бат.</p>
-            <a href="https://t.me/Bathon_Exchange" class="button">Совершить обмен</a>
+            <a href="#" class="button">Совершить обмен</a>
         </div>
         <div class="images">
             <img src="images/image1.jpg" alt="Service Image 1">
@@ -267,5 +305,45 @@
             </div>
         </div>
     </div>
+    <script>
+        const appID = 'c70bb03847584b7abf199242265384a3';
+    
+        async function fetchExchangeRates() {
+            try {
+                const response = await fetch(`https://openexchangerates.org/api/latest.json?app_id=${appID}`);
+                const data = await response.json();
+                const rates = data.rates;
+    
+                const rubToThb = rates.RUB / rates.THB; // 1 THB in RUB
+                const eurToThb = rates.EUR / rates.THB; // 1 THB in EUR
+                const kztToThb = rates.KZT / rates.THB; // 1 THB in KZT
+                const uahToThb = rates.UAH / rates.THB; // 1 THB in UAH
+                const aznToThb = rates.AZN / rates.THB; // 1 THB in AZN
+                const usdToThb = 1 / rates.THB; // 1 THB in USD
+
+    
+                const btcResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+                const btcData = await btcResponse.json();
+                const btcToUsd = btcData.bitcoin.usd;
+    
+                const ticker = document.getElementById('ticker');
+                ticker.innerHTML = `
+                    <span>RUB/THB: ${rubToThb.toFixed(2)}</span>
+                    <span>EUR/THB: ${eurToThb.toFixed(2)}</span>
+                    <span>KZT/THB: ${kztToThb.toFixed(2)}</span>
+                    <span>UAH/THB: ${uahToThb.toFixed(2)}</span>
+                    <span>AZN/THB: ${aznToThb.toFixed(2)}</span>
+                    <span>USD/THB: ${usdToThb.toFixed(2)}</span>
+                    <span>BTC/USD: ${btcToUsd.toFixed(2)}</span>
+                `;
+            } catch (error) {
+                console.error('Error fetching exchange rates:', error);
+                document.getElementById('ticker').innerText = 'Error loading exchange rates.';
+            }
+        }
+    
+        fetchExchangeRates();
+    </script>
+    
 </body>
 </html>
